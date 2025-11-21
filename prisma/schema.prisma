@@ -1,0 +1,74 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Content {
+  id                    Int       @id @default(autoincrement())
+
+  // 분류 체계
+  majorCategory         String    @map("major_category")         // 대분류
+  middleCategory        String    @map("middle_category")        // 중분류
+  minorCategory         String    @map("minor_category")         // 소분류
+  level0               String?   @map("level_0")                 // 0차
+  level1               String?   @map("level_1")                 // 1차
+  level2               String?   @map("level_2")                 // 2차
+  level3               String?   @map("level_3")                 // 3차
+
+  // 상세 정보
+  detailContent         String?   @map("detail_content")         // 세부내용
+  certificationStatus   String?   @map("certification_status")   // 자격증 여부
+  note                  String?                                  // 비고
+  category              String                                   // 구분
+  categoryCode          String    @map("category_code")          // Unnamed: 11 (코드값)
+
+  // 과정 정보
+  courseName            String    @map("course_name")            // 과정명
+  categoryRef           String    @map("category_ref")           // 구분/
+  status                String?                                  // 상태
+  sessions              Int                                      // 차시
+
+  // 콘텐츠 상세
+  courseIntro           String?   @map("course_intro") @db.Text  // 과정소개
+  curriculum            Json?                                    // 학습내용(목차) - 배열 형태
+  developmentYear       String?   @map("development_year")       // 개발연도
+  sme                   String?                                  // SME
+
+  // 가격 정보
+  educationFee          Int       @map("education_fee")          // 교육비(도서비제외)
+  totalFee              Float?    @map("total_fee")              // 총 교육비(도서비포함)
+  sampleLink            String?   @map("sample_link")            // 맛보기
+
+  // ID 정보
+  courseId              String?   @map("course_id")              // 코스 ID
+  contentId             String?   @map("content_id")             // 콘텐츠 ID
+
+  // 기타 정보
+  dsblPrice             Float?    @map("dsbl_price")             // DSBL보존가(도서제외)
+  turnkeyAvailable      String?   @map("turnkey_available")      // 턴키가능여부(건발건협의)
+  targetAudience        String?   @map("target_audience") @db.Text  // 학습대상
+  learningObjective     String?   @map("learning_objective") @db.Text  // 학습목표
+  educationPeriod       String?   @map("education_period")       // 교육기간
+  bookFee               String?   @map("book_fee")               // 도서비
+  bookRequired          String?   @map("book_required")          // 도서필수
+
+  createdAt             DateTime  @default(now()) @map("created_at")
+  updatedAt             DateTime  @updatedAt @map("updated_at")
+
+  // 인덱스 설정
+  @@index([majorCategory])
+  @@index([middleCategory])
+  @@index([minorCategory])
+  @@index([status])
+  @@index([category])
+  @@index([developmentYear])
+  @@index([courseName])
+
+  @@map("contents")
+}
