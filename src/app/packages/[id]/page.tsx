@@ -353,9 +353,12 @@ export default function PackageDetailPage() {
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center justify-between gap-4 mb-1">
                             <h4 className="font-medium truncate">{item.content.courseName}</h4>
-                            <div className="flex items-center gap-1 text-amber-500 flex-shrink-0">
-                              <Star className="h-4 w-4 fill-current" />
-                              <span className="text-sm font-medium">{item.score}점</span>
+                            <div className="flex items-center gap-2 flex-shrink-0">
+                              <div className="flex items-center gap-1 px-2 py-1 bg-amber-50 dark:bg-amber-900/20 rounded-full">
+                                <Star className="h-4 w-4 text-amber-500 fill-current" />
+                                <span className="text-sm font-bold text-amber-600 dark:text-amber-400">{item.score}</span>
+                                <span className="text-xs text-amber-500 dark:text-amber-500">/100</span>
+                              </div>
                             </div>
                           </div>
                           <div className="flex items-center gap-4 text-sm text-slate-500 dark:text-slate-400 mb-2">
