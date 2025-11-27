@@ -5,7 +5,7 @@ export const SYSTEM_PROMPT = `당신은 Touch Contents의 AI 교육 콘텐츠 �
 - 수집된 정보를 바탕으로 최적의 교육 패키지를 추천합니다
 - 추천 이유를 구체적이고 설득력 있게 제시합니다
 
-## 필수 수집 정보 (9가지)
+## 필수 수집 정보 (8가지)
 1. **기업명**: 회사 이름
 2. **산업군**: IT, 제조, 금융, 서비스, 유통 등
 3. **교육 대상 인원**: 몇 명인지
@@ -14,7 +14,6 @@ export const SYSTEM_PROMPT = `당신은 Touch Contents의 AI 교육 콘텐츠 �
 6. **현재 스킬 레벨**: 입문, 초급, 중급, 고급
 7. **학습 목표**: 구체적인 학습 목표나 개발하고 싶은 역량
 8. **교육 기간**: 예상 교육 기간 (주 or 개월 단위)
-9. **예산 범위**: 1인당 교육 예산 (원 단위)
 
 ## 대화 원칙
 1. **한 번에 1-2개 질문**: 절대 3개 이상 동시에 묻지 않습니다
@@ -41,8 +40,7 @@ export const SYSTEM_PROMPT = `당신은 Touch Contents의 AI 교육 콘텐츠 �
     "jobLevel": "직급/레벨 또는 null",
     "skillLevel": "현재 스킬 레벨 또는 null",
     "learningGoal": "학습 목표 또는 null",
-    "duration": "교육 기간 또는 null",
-    "budget": 예산(숫자) 또는 null
+    "duration": "교육 기간 또는 null"
   },
   "isComplete": false
 }
@@ -57,14 +55,12 @@ export const RECOMMENDATION_PROMPT = `당신은 Touch Contents의 AI 교육 콘�
 아래 사용자 요구사항과 후보 콘텐츠를 기반으로 최적의 콘텐츠를 선택하고 패키지를 구성하세요.
 
 ## 선정 기준
-1. 학습 목표 관련성 (가중치: 40%)
-2. 스킬 레벨 적합성 (가중치: 25%)
-3. 예산 적합성 (가중치: 20%)
-4. 교육 기간 적합성 (가중치: 10%)
-5. 콘텐츠 다양성 (가중치: 5%)
+1. 학습 목표 관련성 (가중치: 45%)
+2. 스킬 레벨 적합성 (가중치: 30%)
+3. 교육 기간 적합성 (가중치: 15%)
+4. 콘텐츠 다양성 (가중치: 10%)
 
 ## 제약사항
-- 총 교육비는 예산의 ±10% 이내
 - 총 차시는 교육 기간에 맞게 조정
 - 동일 카테고리 3개 이상 선택 지양
 - 난이도 순서: 기초 → 심화
@@ -86,8 +82,7 @@ export const RECOMMENDATION_PROMPT = `당신은 Touch Contents의 AI 교육 콘�
     "totalFee": 총교육비(숫자),
     "totalSessions": 총차시수(숫자),
     "estimatedDuration": "예상 기간"
-  },
-  "budgetNote": "예산 대비 설명"
+  }
 }`
 
 export interface CollectedInfo {
@@ -99,7 +94,6 @@ export interface CollectedInfo {
   skillLevel: string | null
   learningGoal: string | null
   duration: string | null
-  budget: number | null
 }
 
 export interface ChatResponse {
@@ -122,7 +116,6 @@ export interface RecommendationResult {
     totalSessions: number
     estimatedDuration: string
   }
-  budgetNote: string
 }
 
 export const REQUIRED_FIELDS: (keyof CollectedInfo)[] = [
@@ -133,8 +126,7 @@ export const REQUIRED_FIELDS: (keyof CollectedInfo)[] = [
   'jobLevel',
   'skillLevel',
   'learningGoal',
-  'duration',
-  'budget'
+  'duration'
 ]
 
 export function findMissingFields(info: CollectedInfo): (keyof CollectedInfo)[] {
@@ -171,8 +163,7 @@ export const IMPROVED_RECOMMENDATION_PROMPT = `당신은 Touch Contents의 AI �
 - 2023년 콘텐츠 차선
 - 2022년 이전은 내용이 매우 적합할 때만 선택
 
-### 4. 예산/차시 적합성 (가중치: 10%)
-- 총 교육비 예산 ±15% 이내
+### 4. 교육 기간 적합성 (가중치: 10%)
 - 교육 기간에 맞는 총 차시 구성
 
 ### 5. 다양성 및 체계성 (가중치: 5%)
@@ -213,8 +204,7 @@ export const IMPROVED_RECOMMENDATION_PROMPT = `당신은 Touch Contents의 AI �
     "foundation": [입문/기초 콘텐츠 ID 배열],
     "intermediate": [중급 콘텐츠 ID 배열],
     "advanced": [심화 콘텐츠 ID 배열]
-  },
-  "budgetNote": "예산 대비 설명"
+  }
 }`
 
 /**
@@ -241,5 +231,4 @@ export interface ImprovedRecommendationResult {
     intermediate: number[]
     advanced: number[]
   }
-  budgetNote: string
 }

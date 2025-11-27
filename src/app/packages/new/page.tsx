@@ -31,7 +31,6 @@ interface CollectedInfo {
   skillLevel: string | null
   learningGoal: string | null
   duration: string | null
-  budget: number | null
 }
 
 const REQUIRED_FIELDS = [
@@ -43,7 +42,6 @@ const REQUIRED_FIELDS = [
   { key: "skillLevel", label: "스킬레벨" },
   { key: "learningGoal", label: "학습목표" },
   { key: "duration", label: "교육기간" },
-  { key: "budget", label: "예산" },
 ]
 
 const INITIAL_COLLECTED_INFO: CollectedInfo = {
@@ -55,7 +53,6 @@ const INITIAL_COLLECTED_INFO: CollectedInfo = {
   skillLevel: null,
   learningGoal: null,
   duration: null,
-  budget: null
 }
 
 export default function NewPackagePage() {

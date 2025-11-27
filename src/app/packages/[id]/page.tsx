@@ -14,7 +14,6 @@ import {
   Target,
   Briefcase,
   Calendar,
-  DollarSign,
   MessageSquare,
   Archive,
   Trash2,
@@ -56,7 +55,6 @@ interface PackageDetail {
     skillLevel?: string | null
     learningGoal?: string | null
     duration?: string | null
-    budget?: number | null
   }
   status: string
   createdAt: string
@@ -318,14 +316,6 @@ export default function PackageDetailPage() {
                     <Calendar className="h-3 w-3" /> 교육기간
                   </div>
                   <div className="text-sm">{pkg.requirements.duration}</div>
-                </div>
-              )}
-              {pkg.requirements?.budget && (
-                <div>
-                  <div className="text-xs font-medium text-slate-500 mb-1 flex items-center gap-1">
-                    <DollarSign className="h-3 w-3" /> 예산
-                  </div>
-                  <div className="text-sm">{formatPrice(pkg.requirements.budget)}</div>
                 </div>
               )}
             </div>

@@ -93,7 +93,6 @@ export function formatCurriculum(curriculum: unknown): string {
 export function formatContentForPrompt(content: Content, index: number, scores?: {
   similarity?: number
   recencyScore?: number
-  budgetScore?: number
   totalScore?: number
 }): string {
   const lines = [
@@ -142,26 +141,12 @@ export function calculateRecencyScore(developmentYear: string | null | undefined
 }
 
 /**
- * 예산 적합성 점수 계산
- */
-export function calculateBudgetScore(educationFee: number, budget: number | null | undefined): number {
-  if (!budget || budget <= 0) return 1.0 // 예산 제한 없으면 만점
-
-  if (educationFee <= budget) return 1.0
-  if (educationFee <= budget * 1.1) return 0.8 // 10% 초과
-  if (educationFee <= budget * 1.2) return 0.6 // 20% 초과
-  if (educationFee <= budget * 1.5) return 0.4 // 50% 초과
-  return 0.2 // 그 이상 초과
-}
-
-/**
  * 종합 점수 계산
- * 유사도 50% + 최신성 30% + 예산적합성 20%
+ * 유사도 60% + 최신성 40%
  */
 export function calculateTotalScore(
   similarity: number,
-  recencyScore: number,
-  budgetScore: number
+  recencyScore: number
 ): number {
-  return (similarity * 0.5) + (recencyScore * 0.3) + (budgetScore * 0.2)
+  return (similarity * 0.6) + (recencyScore * 0.4)
 }

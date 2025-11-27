@@ -37,12 +37,13 @@ export function cosineSimilarity(a: number[], b: number[]): number {
 export async function generateChatCompletion(
   messages: Array<{ role: 'system' | 'user' | 'assistant'; content: string }>,
   options?: {
+    model?: string
     temperature?: number
     maxTokens?: number
   }
 ): Promise<string> {
   const response = await openai.chat.completions.create({
-    model: 'gpt-4o-mini',
+    model: options?.model ?? 'gpt-4o-mini',
     messages,
     temperature: options?.temperature ?? 0.7,
     max_tokens: options?.maxTokens ?? 2000,

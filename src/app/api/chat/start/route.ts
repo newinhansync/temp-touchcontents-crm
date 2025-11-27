@@ -15,8 +15,7 @@ export async function POST() {
       jobLevel: null,
       skillLevel: null,
       learningGoal: null,
-      duration: null,
-      budget: null
+      duration: null
     }
 
     const messages = [

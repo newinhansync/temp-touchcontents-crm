@@ -68,7 +68,7 @@ export function extractKeywords(collectedInfo: CollectedInfo): string[] {
   }
 
   // 중복 제거
-  return [...new Set(keywords)]
+  return Array.from(new Set(keywords))
 }
 
 /**
@@ -85,11 +85,6 @@ export interface SearchFilters {
 
 export function buildSearchFilters(collectedInfo: CollectedInfo): SearchFilters {
   const filters: SearchFilters = {}
-
-  // 예산 기반 가격 필터 (15% 여유)
-  if (collectedInfo.budget) {
-    filters.maxPrice = Math.floor(collectedInfo.budget * 1.15)
-  }
 
   // 교육 기간 기반 차시 필터
   if (collectedInfo.duration) {
@@ -152,15 +147,12 @@ export function matchesFilters(
  * 추천 결과 요약 생성
  */
 export function generateRecommendationSummary(
-  contents: Array<{ educationFee: number; sessions: number; developmentYear?: string | null }>,
-  budget: number | null
+  contents: Array<{ educationFee: number; sessions: number; developmentYear?: string | null }>
 ): {
   totalFee: number
   totalSessions: number
   averageFee: number
   latestContentRatio: string
-  budgetStatus: 'under' | 'within' | 'over'
-  budgetDiff: number
 } {
   const totalFee = contents.reduce((sum, c) => sum + c.educationFee, 0)
   const totalSessions = contents.reduce((sum, c) => sum + c.sessions, 0)
@@ -177,25 +169,10 @@ export function generateRecommendationSummary(
     : 0
   const latestContentRatio = `${latestRatio}%가 ${currentYear - 1}-${currentYear}년 개발`
 
-  // 예산 대비 상태
-  let budgetStatus: 'under' | 'within' | 'over' = 'within'
-  let budgetDiff = 0
-
-  if (budget) {
-    budgetDiff = totalFee - budget
-    if (totalFee < budget * 0.9) {
-      budgetStatus = 'under'
-    } else if (totalFee > budget * 1.1) {
-      budgetStatus = 'over'
-    }
-  }
-
   return {
     totalFee,
     totalSessions,
     averageFee,
-    latestContentRatio,
-    budgetStatus,
-    budgetDiff
+    latestContentRatio
   }
 }
