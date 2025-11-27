@@ -31,8 +31,20 @@ export async function GET(
 
     const totalPrice = pkg.items.reduce((sum, item) => sum + item.content.educationFee, 0)
     const totalSessions = pkg.items.reduce((sum, item) => sum + item.content.sessions, 0)
+
+    // 점수 정규화 함수: 비정상적으로 큰 점수(>100)를 0-100 범위로 변환
+    const normalizeScore = (score: number): number => {
+      if (score <= 100) return Math.round(score)
+      // 비정상 점수 (예: 298360~300773) → 0-100으로 정규화
+      // 대략 298000~301000 범위를 0-100으로 매핑
+      const minScore = 298000
+      const maxScore = 301000
+      const normalized = Math.round(((score - minScore) / (maxScore - minScore)) * 100)
+      return Math.max(0, Math.min(100, normalized))
+    }
+
     const averageScore = pkg.items.length > 0
-      ? pkg.items.reduce((sum, item) => sum + item.score, 0) / pkg.items.length
+      ? pkg.items.reduce((sum, item) => sum + normalizeScore(item.score), 0) / pkg.items.length
       : 0
 
     return NextResponse.json({
@@ -51,7 +63,7 @@ export async function GET(
         content: item.content,
         order: item.order,
         reason: item.reason,
-        score: item.score
+        score: normalizeScore(item.score)
       })),
       conversation: pkg.conversation,
       summary: {
