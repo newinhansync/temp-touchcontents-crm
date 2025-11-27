@@ -61,6 +61,10 @@ model Content {
   createdAt             DateTime  @default(now()) @map("created_at")
   updatedAt             DateTime  @updatedAt @map("updated_at")
 
+  // Relations
+  embedding         ContentEmbedding?
+  packageItems      PackageItem[]
+
   // 인덱스 설정
   @@index([majorCategory])
   @@index([middleCategory])
@@ -71,4 +75,82 @@ model Content {
   @@index([courseName])
 
   @@map("contents")
+}
+
+// AI 콘텐츠 추천 시스템용 테이블들
+
+model Package {
+  id              Int       @id @default(autoincrement())
+  name            String    // AI가 자동 생성한 패키지 이름
+  description     String?   @db.Text // 패키지 설명
+  targetCompany   String    @map("target_company") // 대상 기업
+  targetGroup     String?   @map("target_group") // 대상 그룹 (직군, 직급 등)
+
+  // 대화를 통해 수집된 필수 정보
+  requirements    Json      // {industry, employeeCount, skillLevel, budget, duration, priorities}
+
+  status          String    @default("active") // active, archived
+  createdAt       DateTime  @default(now()) @map("created_at")
+  updatedAt       DateTime  @updatedAt @map("updated_at")
+
+  // Relations
+  items           PackageItem[]
+  conversation    Conversation?
+
+  @@index([targetCompany])
+  @@index([status])
+  @@map("packages")
+}
+
+model PackageItem {
+  id              Int       @id @default(autoincrement())
+  packageId       Int       @map("package_id")
+  contentId       Int       @map("content_id") // Content 테이블 참조
+  order           Int       // 추천 순서
+  reason          String    @db.Text // AI가 생성한 추천 사유
+  score           Float     // 추천 스코어 (0-100)
+
+  // Relations
+  package         Package   @relation(fields: [packageId], references: [id], onDelete: Cascade)
+  content         Content   @relation(fields: [contentId], references: [id])
+
+  @@unique([packageId, contentId])
+  @@index([packageId])
+  @@index([contentId])
+  @@map("package_items")
+}
+
+model Conversation {
+  id              Int       @id @default(autoincrement())
+  packageId       Int       @unique @map("package_id")
+  sessionId       String    @unique @map("session_id") // 세션 ID
+  messages        Json      // [{role: 'user'|'assistant', content: string, timestamp: DateTime}]
+
+  // 대화 중 수집된 정보 (구조화)
+  collectedInfo   Json      @map("collected_info") // {company, industry, group, budget, duration, etc.}
+
+  status          String    @default("active") // active, completed
+  createdAt       DateTime  @default(now()) @map("created_at")
+  updatedAt       DateTime  @updatedAt @map("updated_at")
+
+  // Relations
+  package         Package   @relation(fields: [packageId], references: [id], onDelete: Cascade)
+
+  @@index([sessionId])
+  @@map("conversations")
+}
+
+model ContentEmbedding {
+  id              Int       @id @default(autoincrement())
+  contentId       Int       @unique @map("content_id")
+  embedding       String    @db.Text // JSON string array of floats for OpenAI text-embedding-3-small
+  embeddingModel  String    @default("text-embedding-3-small") @map("embedding_model")
+  createdAt       DateTime  @default(now()) @map("created_at")
+  updatedAt       DateTime  @updatedAt @map("updated_at")
+
+  // Relations
+  content         Content @relation(fields: [contentId], references: [id], onDelete: Cascade)
+
+  @@index([contentId])
+  @@map("content_embeddings")
 }

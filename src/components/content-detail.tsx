@@ -17,6 +17,24 @@ interface ContentDetailProps {
   onOpenChange: (open: boolean) => void
 }
 
+function renderCurriculum(curriculum: unknown): React.ReactNode {
+  if (!curriculum || !Array.isArray(curriculum) || curriculum.length === 0) {
+    return null
+  }
+  return (
+    <div>
+      <h4 className="font-medium text-sm text-muted-foreground mb-2">학습내용(목차)</h4>
+      <ol className="text-sm space-y-1 list-decimal list-inside">
+        {(curriculum as string[]).map((item, index) => (
+          <li key={index} className="text-sm">
+            {String(item)}
+          </li>
+        ))}
+      </ol>
+    </div>
+  )
+}
+
 export function ContentDetail({ content, open, onOpenChange }: ContentDetailProps) {
   if (!content) return null
 
@@ -74,18 +92,7 @@ export function ContentDetail({ content, open, onOpenChange }: ContentDetailProp
                 <p className="text-sm whitespace-pre-wrap">{content.courseIntro}</p>
               </div>
             )}
-            {content.curriculum && Array.isArray(content.curriculum) && content.curriculum.length > 0 && (
-              <div>
-                <h4 className="font-medium text-sm text-muted-foreground mb-2">학습내용(목차)</h4>
-                <ol className="text-sm space-y-1 list-decimal list-inside">
-                  {(content.curriculum as string[]).map((item, index) => (
-                    <li key={index} className="text-sm">
-                      {item}
-                    </li>
-                  ))}
-                </ol>
-              </div>
-            )}
+            {renderCurriculum(content.curriculum)}
             {content.learningObjective && (
               <div>
                 <h4 className="font-medium text-sm text-muted-foreground mb-1">학습목표</h4>

@@ -89,8 +89,14 @@ export async function GET(request: NextRequest) {
           { sme: searchCondition },
           { learningObjective: searchCondition },
         ]
-      } else {
-        where[searchField as keyof typeof where] = searchCondition
+      } else if (searchField === 'courseName') {
+        where.courseName = searchCondition
+      } else if (searchField === 'courseIntro') {
+        where.courseIntro = searchCondition
+      } else if (searchField === 'sme') {
+        where.sme = searchCondition
+      } else if (searchField === 'learningObjective') {
+        where.learningObjective = searchCondition
       }
     }
 
